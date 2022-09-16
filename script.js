@@ -5,31 +5,18 @@ var screeHeight = 0;
 const lineHeight = 30;
 var numberOfRows = 0
 var vdomRowStartIndex = 0;
-var vdom = [];
+//var vdom = [];
 
 const init = () => {
     console.log('init', jsonData.length);
     //  upDateScreenHeight
     screeHeight = window.innerHeight;
     //console.log(`screeHeight: ${screeHeight}`);
-    numberOfRows = Math.ceil(screeHeight / lineHeight);
+    numberOfRows = Math.ceil(screeHeight / lineHeight) + 1;
     //console.log(`numberOfRows: ${numberOfRows}`);
-    // reset vdom
-    vdom = [];
-    document.getElementById('viewport').innerHTML = '';
-
-    let cw = document.createElement('div');
-    cw.id = 'content-wrapper';
-    cw.className = 'container content-wrapper';
-
-    for(let i =0; i<numberOfRows; i++){
-        let tRow = createRow(i);
-        
-        cw.appendChild(tRow);
-        vdom.push(tRow);
-    }
-
-    document.getElementById('viewport').appendChild(cw);
+    
+    document.getElementById('stage').style.height = `${jsonData.length * lineHeight}px`;
+  renderVdom(0);
 }
 
 const createRow = (index) => {
@@ -74,64 +61,43 @@ const createRow = (index) => {
 function renderVdom(scrollPos) {
     
     let posTop = scrollPos % lineHeight;
-    document.getElementById("content-wrapper").style = `top:-${posTop}px`;
+    console.log(`posTop: ${posTop}`);
+//    document.getElementById("content-wrapper").style.top = `-${posTop}px`;
 
 
-    let tmpRowStartIndex = Math.floor(scrollPos / lineHeight);
-    let vec = tmpRowStartIndex - vdomRowStartIndex;
-    console.log(`vec: ${vec}`);
-    if(vec < 0){// up
+    let vdomRowStartIndex = Math.floor(scrollPos / lineHeight);
+    console.log(`vdomRowStartIndex: ${vdomRowStartIndex}`);
+
+    document.getElementById('viewport').innerHTML = '';
+
+    let cw = document.createElement('div');
+    cw.id = 'content-wrapper';
+    cw.className = 'container content-wrapper';
+    cw.style.top = `-${posTop}px`;
+
+    for(let i =0; i<numberOfRows; i++){
+        let tRow = createRow(vdomRowStartIndex + i);
         
-        for(let i = -1; i>=vec; i--){
-            console.log(`xxx up: ${vdomRowStartIndex + numberOfRows - i}`);
-            //debugger;
-            // remove last child
-            const element = document.getElementById(`row-${vdomRowStartIndex + numberOfRows - i}`);
-            element.remove();
-            vdom.pop();
-        
-            // create new first child
-            let tRow = createRow(tmpRowStartIndex);
-            document.getElementById('content-wrapper').prepend(tRow);
-            vdom.unshift(tRow);
-        }
-        vdomRowStartIndex = tmpRowStartIndex;
+        cw.appendChild(tRow);
+        //vdom.push(tRow);
     }
 
-    if(vec > 0){// down
-        vdomRowStartIndex = tmpRowStartIndex;
-        
-        for(let i = 1; i<=vec; i++){
-             console.log(`xxx down: ${vdomRowStartIndex - i}`);
-            // debugger;
-            // remove first child
-            const element = document.getElementById(`row-${vdomRowStartIndex - i}`);
-            element.remove();
-            vdom.shift();
-            // create new last child
-            let tRow = createRow(vdomRowStartIndex + numberOfRows + i);
-            document.getElementById('content-wrapper').appendChild(tRow);
-            vdom.push(tRow);
-        }
-        
-    }
+    document.getElementById('viewport').appendChild(cw);
 
-
-    
 }
 
 document.addEventListener('scroll', (e) => {
     // let scrollDirection = lastKnownScrollPosition > window.scrollY ? 'up' : 'down';
     // lastKnownScrollPosition = window.scrollY;
-    renderVdom(window.scrollY);
-    /*if (!ticking) {
+    let scrollPos = window.scrollY;
+    if (!ticking) {
         window.requestAnimationFrame(() => {
-            renderVdom(window.scrollY);
+            renderVdom(scrollPos);
             ticking = false;
         });
 
         ticking = true;
-    }*/
+    }
 });
 
 document.addEventListener('DOMContentLoaded', init);

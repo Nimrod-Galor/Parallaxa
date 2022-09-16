@@ -2,8 +2,8 @@
 html, body{margin: 0; padding: 0;}
 
 
-.stage{height: 1000vh;border: 1px solid red;}
-.viewport{height: 100vh;width:100%;border: 1px solid blue;position: fixed;}
+
+.viewport{height: 100vh;width:100%;position: fixed;}
 .content-wrapper{position: relative;top:0;}
 
 
