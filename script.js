@@ -8,15 +8,11 @@ var vdomRowStartIndex = 0;
 //var vdom = [];
 
 const init = () => {
-    console.log('init', jsonData.length);
     //  upDateScreenHeight
     screeHeight = window.innerHeight;
-    //console.log(`screeHeight: ${screeHeight}`);
-    numberOfRows = Math.ceil(screeHeight / lineHeight) + 1;
-    //console.log(`numberOfRows: ${numberOfRows}`);
-    
+    numberOfRows = Math.ceil(screeHeight / lineHeight);
     document.getElementById('stage').style.height = `${jsonData.length * lineHeight}px`;
-  renderVdom(0);
+    renderVdom(0);
 }
 
 const createRow = (index) => {
@@ -59,15 +55,8 @@ const createRow = (index) => {
 
 
 function renderVdom(scrollPos) {
-    
     let posTop = scrollPos % lineHeight;
-    console.log(`posTop: ${posTop}`);
-//    document.getElementById("content-wrapper").style.top = `-${posTop}px`;
-
-
     let vdomRowStartIndex = Math.floor(scrollPos / lineHeight);
-    console.log(`vdomRowStartIndex: ${vdomRowStartIndex}`);
-
     document.getElementById('viewport').innerHTML = '';
 
     let cw = document.createElement('div');
@@ -77,22 +66,17 @@ function renderVdom(scrollPos) {
 
     for(let i =0; i<numberOfRows; i++){
         let tRow = createRow(vdomRowStartIndex + i);
-        
         cw.appendChild(tRow);
-        //vdom.push(tRow);
     }
 
     document.getElementById('viewport').appendChild(cw);
-
 }
 
 document.addEventListener('scroll', (e) => {
-    // let scrollDirection = lastKnownScrollPosition > window.scrollY ? 'up' : 'down';
-    // lastKnownScrollPosition = window.scrollY;
-    let scrollPos = window.scrollY;
+    //let scrollPos = window.scrollY;
     if (!ticking) {
         window.requestAnimationFrame(() => {
-            renderVdom(scrollPos);
+            renderVdom(window.scrollY);
             ticking = false;
         });
 
